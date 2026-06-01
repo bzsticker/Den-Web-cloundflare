@@ -77,6 +77,8 @@ supabase/schema.sql
 - Output directory: `dist`
 - Node.js version: 18 หรือใหม่กว่า
 
+โปรเจกต์นี้มีไฟล์ `wrangler.toml` ที่ตั้งค่า `pages_build_output_dir = "dist"` ไว้แล้ว เพื่อให้ Cloudflare Pages deploy ไฟล์ที่ build จาก Vite ไม่ใช่ไฟล์จาก root ของ repository
+
 4. เพิ่ม Environment Variables ใน Cloudflare Pages:
 
 ```bash

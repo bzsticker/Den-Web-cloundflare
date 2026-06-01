@@ -77,6 +77,8 @@ The booking form writes to the `bookings` table, including the customer's prefer
 - Output directory: `dist`
 - Node.js version: 18 or newer
 
+This repository also includes `wrangler.toml` with `pages_build_output_dir = "dist"` so Cloudflare Pages deploys the built Vite output instead of the repository root.
+
 4. Add environment variables in Cloudflare Pages:
 
 ```bash
