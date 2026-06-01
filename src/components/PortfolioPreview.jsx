@@ -22,7 +22,7 @@ export default function PortfolioPreview() {
   const sec = content.sections?.portfolio?.[language] || t.sections.portfolio;
 
   return (
-    <section id="portfolio" aria-labelledby="portfolio-title" className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
+    <section id="portfolio" aria-labelledby="portfolio-title" className="bg-white py-20 transition-colors duration-300 dark:bg-brand-navy lg:py-28">
       <div className="section-shell">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
@@ -52,7 +52,7 @@ export default function PortfolioPreview() {
           {items.map((meta, index) => {
             const item = meta[language] || meta.th || t.portfolio[meta.id];
             return (
-              <article key={meta.id} className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-glow dark:border-white/10 dark:bg-[#112a4a]">
+              <article key={meta.id} className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-glow dark:border-white/10 dark:bg-brand-card">
                 <div className={`relative h-56 overflow-hidden bg-gradient-to-br ${gradients[index % gradients.length]} p-5`}>
                   {meta.imageUrl ? (
                     <img className="absolute inset-0 h-full w-full object-cover" src={meta.imageUrl} alt="" />

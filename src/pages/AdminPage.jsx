@@ -33,7 +33,7 @@ import {
 
 function Field({ label, value, onChange, textarea = false, type = 'text', placeholder = '', onTranslate = null, translating = false }) {
   const className =
-    'focus-ring mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy shadow-sm transition placeholder:text-slate-400 dark:border-white/10 dark:bg-[#152e4d] dark:text-white';
+    'focus-ring mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy shadow-sm transition placeholder:text-slate-400 dark:border-white/10 dark:bg-brand-navy dark:text-white';
 
   return (
     <div className="block">
@@ -105,7 +105,7 @@ function UploadField({ label, value, folder, onChange }) {
       <p className="text-sm font-black text-slate-700 dark:text-slate-200">{label}</p>
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
         <input
-          className="focus-ring min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy dark:border-white/10 dark:bg-[#152e4d] dark:text-white"
+          className="focus-ring min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy dark:border-white/10 dark:bg-brand-navy dark:text-white"
           value={value || ''}
           onChange={(event) => onChange(event.target.value)}
           placeholder="https://..."
@@ -141,7 +141,7 @@ function ListStringEditor({ label, items = [], onChange }) {
       <div className="mt-2 flex gap-2">
         <input
           type="text"
-          className="focus-ring flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy dark:border-white/10 dark:bg-[#152e4d] dark:text-white"
+          className="focus-ring flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy dark:border-white/10 dark:bg-brand-navy dark:text-white"
           value={newValue}
           onChange={(e) => setNewValue(e.target.value)}
           placeholder="พิมพ์คุณสมบัติแพ็กเกจ..."
@@ -281,7 +281,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#07182d]">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-brand-ink">
         <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
       </div>
     );
@@ -289,8 +289,8 @@ export default function AdminPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-slate-50 px-5 py-10 dark:bg-[#07182d] flex items-center justify-center">
-        <div className="mx-auto max-w-md w-full rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft dark:border-white/10 dark:bg-[#112a4a]">
+      <div className="min-h-screen bg-slate-50 px-5 py-10 dark:bg-brand-ink flex items-center justify-center">
+        <div className="mx-auto max-w-md w-full rounded-[2rem] border border-slate-200 bg-white p-8 shadow-soft dark:border-white/10 dark:bg-brand-card">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-white shadow-glow">
@@ -330,8 +330,8 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-brand-ink dark:bg-[#07182d] dark:text-slate-100 transition-colors duration-300">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#07182d]/90">
+    <div className="min-h-screen bg-slate-50 text-brand-ink dark:bg-brand-ink dark:text-slate-100 transition-colors duration-300">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-brand-ink/90">
         <div className="section-shell flex min-h-20 flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-black text-sky-600 dark:text-sky-200 tracking-widest uppercase">เด่นโมดิฟาย ระยอง</p>
@@ -356,7 +356,7 @@ export default function AdminPage() {
       </header>
 
       {/* Tabs navigation */}
-      <div className="bg-white border-b border-slate-200 dark:bg-[#0b1f3a] dark:border-white/10 transition-colors duration-300">
+      <div className="bg-white border-b border-slate-200 dark:bg-brand-navy dark:border-white/10 transition-colors duration-300">
         <div className="section-shell overflow-x-auto">
           <nav className="flex gap-6 py-3 min-w-max">
             {tabs.map((tab) => {

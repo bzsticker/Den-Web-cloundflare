@@ -25,7 +25,7 @@ export default function Packages() {
   });
 
   return (
-    <section id="packages" aria-labelledby="packages-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
+    <section id="packages" aria-labelledby="packages-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-brand-ink lg:py-28">
       <div className="section-shell">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">{sec.eyebrow}</p>
@@ -40,7 +40,7 @@ export default function Packages() {
                 className={`relative flex min-h-[470px] flex-col rounded-[1.75rem] border p-6 shadow-soft transition duration-300 hover:-translate-y-1 ${
                   item.highlight
                     ? 'border-sky-300 bg-gradient-to-b from-sky-500 to-blue-600 text-white lg:-translate-y-4'
-                    : 'border-slate-200 bg-white dark:border-white/10 dark:bg-[#112a4a]'
+                    : 'border-slate-200 bg-white dark:border-white/10 dark:bg-brand-card'
                 }`}
               >
                 {item.highlight && (

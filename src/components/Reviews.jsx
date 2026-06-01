@@ -19,7 +19,7 @@ export default function Reviews() {
   });
 
   return (
-    <section id="reviews" aria-labelledby="reviews-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
+    <section id="reviews" aria-labelledby="reviews-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-brand-ink lg:py-28">
       <div className="section-shell">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">{sec.eyebrow}</p>

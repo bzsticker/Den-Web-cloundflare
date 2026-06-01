@@ -17,7 +17,7 @@ import AdminPage from './pages/AdminPage.jsx';
 
 function LandingPage() {
   return (
-    <div className="min-h-screen overflow-hidden bg-slate-50 text-brand-ink antialiased transition-colors duration-300 dark:bg-[#07182d] dark:text-slate-100">
+    <div className="min-h-screen overflow-hidden bg-slate-50 text-brand-ink antialiased transition-colors duration-300 dark:bg-brand-ink dark:text-slate-100">
       <AnnouncementBar />
       <Navbar />
       <main>

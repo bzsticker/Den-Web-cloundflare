@@ -24,7 +24,7 @@ export default function Services() {
   });
 
   return (
-    <section id="services" aria-labelledby="services-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
+    <section id="services" aria-labelledby="services-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-brand-ink lg:py-28">
       <div className="section-shell">
         <div className="max-w-3xl">
           <p className="eyebrow">{sec.eyebrow}</p>

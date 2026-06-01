@@ -24,7 +24,7 @@ body {
 }
 
 ::selection {
-  background: rgba(14, 165, 233, 0.28);
+  background: rgba(255, 107, 0, 0.28);
 }
 
 .section-shell {
@@ -36,11 +36,11 @@ body {
 }
 
 .card {
-  @apply rounded-[1.75rem] border border-slate-200/80 bg-white/95 shadow-soft backdrop-blur transition duration-300 dark:border-white/10 dark:bg-[#112a4a];
+  @apply rounded-[1.75rem] border border-slate-200/80 bg-white/95 shadow-soft backdrop-blur transition duration-300 dark:border-white/10 dark:bg-brand-card;
 }
 
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-sky-300/35 dark:focus-visible:ring-offset-[#07182d];
+  @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-sky-300/35 dark:focus-visible:ring-offset-brand-ink;
 }
 
 .section-heading {

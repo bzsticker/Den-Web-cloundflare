@@ -8,7 +8,7 @@ function ContactLinkCard({ icon: Icon, label, value, href }) {
       href={href}
       target={href.startsWith('http') ? '_blank' : undefined}
       rel={href.startsWith('http') ? 'noreferrer' : undefined}
-      className="focus-ring flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-glow dark:border-white/10 dark:bg-[#112a4a] group"
+      className="focus-ring flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-glow dark:border-white/10 dark:bg-brand-card group"
     >
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-500 dark:bg-sky-400/10 dark:text-sky-200 transition group-hover:scale-105">
         <Icon className="h-5 w-5" aria-hidden="true" />
@@ -36,13 +36,13 @@ export default function ContactSection() {
   });
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
+    <section id="contact" aria-labelledby="contact-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-brand-ink lg:py-28">
       <div className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="eyebrow">{sec.eyebrow}</p>
           <h2 id="contact-title" className="section-heading mt-5">{sec.title}</h2>
           <p className="muted-copy mt-4">{sec.description}</p>
-          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-white/10 dark:bg-[#112a4a]">
+          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-white/10 dark:bg-brand-card">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-500 dark:bg-sky-400/10 dark:text-sky-200">
               <Clock className="h-5 w-5" aria-hidden="true" />
             </div>

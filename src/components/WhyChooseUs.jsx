@@ -18,7 +18,7 @@ export default function WhyChooseUs() {
   });
 
   return (
-    <section className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
+    <section className="bg-white py-20 transition-colors duration-300 dark:bg-brand-navy lg:py-28">
       <div className="section-shell grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
         <div>
           <p className="eyebrow">{sec.eyebrow}</p>
@@ -29,7 +29,7 @@ export default function WhyChooseUs() {
           {itemList.map((item, index) => {
             const Icon = icons[index % icons.length];
             return (
-              <article key={item.title} className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-soft dark:border-white/10 dark:bg-[#112a4a]">
+              <article key={item.title} className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-soft dark:border-white/10 dark:bg-brand-card">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 dark:bg-sky-400/15 dark:text-sky-200">
                   {Icon && <Icon className="h-6 w-6" aria-hidden="true" />}
                 </div>

@@ -11,7 +11,7 @@ export default function Hero() {
     <section
       id="top"
       aria-labelledby="hero-title"
-      className="relative bg-[linear-gradient(180deg,#eff9ff_0%,#ffffff_52%,#f8fbff_100%)] py-18 transition-colors duration-300 dark:bg-[linear-gradient(180deg,#07182d_0%,#0b1f3a_52%,#10213d_100%)] sm:py-20 lg:py-28"
+      className="relative bg-[linear-gradient(180deg,#eff9ff_0%,#ffffff_52%,#f8fbff_100%)] py-18 transition-colors duration-300 dark:bg-gradient-to-b dark:from-brand-ink dark:via-brand-card dark:to-brand-navy sm:py-20 lg:py-28"
     >
       <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_18%_12%,rgba(14,165,233,0.25),transparent_34%),radial-gradient(circle_at_82%_4%,rgba(245,184,65,0.13),transparent_30%)]" />
       <div className="section-shell relative grid items-center gap-14 lg:grid-cols-[1.04fr_0.96fr]">
@@ -56,7 +56,7 @@ export default function Hero() {
           <div className="absolute -right-4 -top-4 hidden rounded-3xl bg-brand-red px-4 py-2 text-sm font-black text-white shadow-soft sm:block">
             QC
           </div>
-          <div className="rounded-[1.35rem] border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-4 dark:border-white/10 dark:from-[#0b1f3a] dark:to-[#112a4a] sm:p-5">
+          <div className="rounded-[1.35rem] border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-4 dark:border-white/10 dark:from-brand-card dark:to-brand-navy sm:p-5">
             {content.hero.dashboardImageUrl && (
               <img
                 className="mb-5 h-48 w-full rounded-3xl object-cover"

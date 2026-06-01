@@ -11,9 +11,9 @@ export default function BookingCTA() {
   const navText = content.brand?.[language]?.short || t.nav.booking;
 
   return (
-    <section id="booking" className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
+    <section id="booking" className="bg-white py-20 transition-colors duration-300 dark:bg-brand-navy lg:py-28">
       <div className="section-shell">
-        <div className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.32),transparent_32%),linear-gradient(135deg,#0b1f3a,#123b66)] p-8 text-white shadow-glow dark:bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.2),transparent_32%),linear-gradient(135deg,#07182d,#0f2948)] sm:p-10 lg:p-14">
+        <div className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_left,rgba(255,107,0,0.25),transparent_32%),linear-gradient(135deg,#12131a,#181a24)] p-8 text-white shadow-glow dark:bg-[radial-gradient(circle_at_top_left,rgba(255,107,0,0.15),transparent_32%),linear-gradient(135deg,#0b0c10,#181a24)] sm:p-10 lg:p-14">
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-black text-sky-100">

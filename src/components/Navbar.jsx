@@ -19,7 +19,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-sky-100/70 bg-white/88 backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-[#07182d]/88">
+    <header className="sticky top-0 z-50 border-b border-sky-100/70 bg-white/88 backdrop-blur-2xl transition-colors duration-300 dark:border-white/10 dark:bg-brand-ink/88">
       <nav className="section-shell flex h-20 items-center justify-between" aria-label="Main navigation">
         <a href="#top" className="focus-ring flex rounded-2xl items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-glow">
@@ -75,7 +75,7 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`grid border-t border-slate-100 bg-white shadow-soft transition-all duration-300 lg:hidden dark:border-white/10 dark:bg-[#0b1f3a] ${
+        className={`grid border-t border-slate-100 bg-white shadow-soft transition-all duration-300 lg:hidden dark:border-white/10 dark:bg-brand-card ${
           open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
         }`}
       >
