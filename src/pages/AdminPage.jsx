@@ -31,13 +31,35 @@ import {
   uploadSiteAsset,
 } from '../services/siteContentService.js';
 
-function Field({ label, value, onChange, textarea = false, type = 'text', placeholder = '' }) {
+function Field({ label, value, onChange, textarea = false, type = 'text', placeholder = '', onTranslate = null, translating = false }) {
   const className =
     'focus-ring mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-brand-navy shadow-sm transition placeholder:text-slate-400 dark:border-white/10 dark:bg-[#152e4d] dark:text-white';
 
   return (
-    <label className="block text-sm font-black text-slate-700 dark:text-slate-200">
-      {label}
+    <div className="block">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-black text-slate-700 dark:text-slate-200">{label}</span>
+        {onTranslate && (
+          <button
+            type="button"
+            onClick={onTranslate}
+            disabled={translating}
+            className="text-xs font-black text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 flex items-center gap-1 transition-all disabled:opacity-50"
+          >
+            {translating ? (
+              <>
+                <Loader2 className="h-3 w-3 animate-spin" />
+                กำลังแปล...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-3.5 w-3.5 text-brand-gold fill-brand-gold" />
+                แปลจากไทยอัตโนมัติ
+              </>
+            )}
+          </button>
+        )}
+      </div>
       {textarea ? (
         <textarea
           className={`${className} min-h-28 resize-y`}
@@ -54,7 +76,7 @@ function Field({ label, value, onChange, textarea = false, type = 'text', placeh
           placeholder={placeholder}
         />
       )}
-    </label>
+    </div>
   );
 }
 
@@ -166,6 +188,7 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('general');
+  const [translatingMap, setTranslatingMap] = useState({});
 
   useEffect(() => {
     if (content) {
@@ -185,6 +208,40 @@ export default function AdminPage() {
   const setPath = (updater) => {
     setDraft((current) => mergeSiteContent(defaultSiteContent, updater(structuredClone(current))));
     setMessage('');
+  };
+
+  const handleTranslate = async (sourceText, setterKeyPath) => {
+    if (!sourceText || !sourceText.trim()) return;
+
+    setTranslatingMap((prev) => ({ ...prev, [setterKeyPath]: true }));
+
+    try {
+      const response = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=th&tl=en&dt=t&q=${encodeURIComponent(sourceText)}`
+      );
+      if (!response.ok) throw new Error('Translation request failed');
+      const data = await response.json();
+      const translatedText = data[0].map((item) => item[0]).join('');
+
+      setPath((next) => {
+        const keys = setterKeyPath.split('.');
+        let obj = next;
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (!obj[key]) {
+            obj[key] = isNaN(keys[i + 1]) ? {} : [];
+          }
+          obj = obj[key];
+        }
+        const lastKey = keys[keys.length - 1];
+        obj[lastKey] = translatedText;
+        return next;
+      });
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setTranslatingMap((prev) => ({ ...prev, [setterKeyPath]: false }));
+    }
   };
 
   const signIn = async (event) => {
@@ -358,8 +415,20 @@ export default function AdminPage() {
                   <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-5 bg-slate-50/50 dark:bg-white/5">
                     <h3 className="font-black text-sky-600 dark:text-sky-300">EN (ภาษาอังกฤษ)</h3>
                     <div className="mt-3 space-y-4">
-                      <Field label="Shop Full Name" value={draft.brand.en.name} onChange={(value) => setPath((next) => ({ ...next, brand: { ...next.brand, en: { ...next.brand.en, name: value } } }))} />
-                      <Field label="Short Name" value={draft.brand.en.short} onChange={(value) => setPath((next) => ({ ...next, brand: { ...next.brand, en: { ...next.brand.en, short: value } } }))} />
+                      <Field
+                        label="Shop Full Name"
+                        value={draft.brand.en.name}
+                        onChange={(value) => setPath((next) => ({ ...next, brand: { ...next.brand, en: { ...next.brand.en, name: value } } }))}
+                        onTranslate={() => handleTranslate(draft.brand.th.name, 'brand.en.name')}
+                        translating={translatingMap['brand.en.name']}
+                      />
+                      <Field
+                        label="Short Name"
+                        value={draft.brand.en.short}
+                        onChange={(value) => setPath((next) => ({ ...next, brand: { ...next.brand, en: { ...next.brand.en, short: value } } }))}
+                        onTranslate={() => handleTranslate(draft.brand.th.short, 'brand.en.short')}
+                        translating={translatingMap['brand.en.short']}
+                      />
                     </div>
                   </div>
                 </div>
@@ -374,7 +443,13 @@ export default function AdminPage() {
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">ข้อความที่จะวิ่งอยู่บนแถบสีฟ้าด้านบนสุดของหน้าหลัก</p>
               <div className="mt-5 grid gap-6 md:grid-cols-2">
                 <Field label="ข้อความประกาศ (TH)" value={draft.announcement.th.text} onChange={(value) => setPath((next) => ({ ...next, announcement: { ...next.announcement, th: { text: value } } }))} />
-                <Field label="Announcement Text (EN)" value={draft.announcement.en.text} onChange={(value) => setPath((next) => ({ ...next, announcement: { ...next.announcement, en: { text: value } } }))} />
+                <Field
+                  label="Announcement Text (EN)"
+                  value={draft.announcement.en.text}
+                  onChange={(value) => setPath((next) => ({ ...next, announcement: { ...next.announcement, en: { text: value } } }))}
+                  onTranslate={() => handleTranslate(draft.announcement.th.text, 'announcement.en.text')}
+                  translating={translatingMap['announcement.en.text']}
+                />
               </div>
             </section>
 
@@ -394,8 +469,21 @@ export default function AdminPage() {
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-5 bg-slate-50/50 dark:bg-white/5">
                   <h3 className="font-black text-sky-600 dark:text-sky-300">EN (ภาษาอังกฤษ)</h3>
                   <div className="mt-3 space-y-4">
-                    <Field label="Footer Description" textarea value={draft.footer.en.description} onChange={(value) => setPath((next) => ({ ...next, footer: { ...next.footer, en: { ...next.footer.en, description: value } } }))} />
-                    <Field label="Rights Text" value={draft.footer.en.rights} onChange={(value) => setPath((next) => ({ ...next, footer: { ...next.footer, en: { ...next.footer.en, rights: value } } }))} />
+                    <Field
+                      label="Footer Description"
+                      textarea
+                      value={draft.footer.en.description}
+                      onChange={(value) => setPath((next) => ({ ...next, footer: { ...next.footer, en: { ...next.footer.en, description: value } } }))}
+                      onTranslate={() => handleTranslate(draft.footer.th.description, 'footer.en.description')}
+                      translating={translatingMap['footer.en.description']}
+                    />
+                    <Field
+                      label="Rights Text"
+                      value={draft.footer.en.rights}
+                      onChange={(value) => setPath((next) => ({ ...next, footer: { ...next.footer, en: { ...next.footer.en, rights: value } } }))}
+                      onTranslate={() => handleTranslate(draft.footer.th.rights, 'footer.en.rights')}
+                      translating={translatingMap['footer.en.rights']}
+                    />
                   </div>
                 </div>
               </div>
@@ -424,9 +512,28 @@ export default function AdminPage() {
                   <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-5 bg-slate-50/50 dark:bg-white/5">
                     <h3 className="font-black text-sky-600 dark:text-sky-300">EN (ภาษาอังกฤษ)</h3>
                     <div className="mt-3 space-y-4">
-                      <Field label="Ribbon Badge" value={draft.hero.en.badge} onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, badge: value } } }))} />
-                      <Field label="Main Headline" value={draft.hero.en.headline} onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, headline: value } } }))} />
-                      <Field label="Description text" textarea value={draft.hero.en.description} onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, description: value } } }))} />
+                      <Field
+                        label="Ribbon Badge"
+                        value={draft.hero.en.badge}
+                        onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, badge: value } } }))}
+                        onTranslate={() => handleTranslate(draft.hero.th.badge, 'hero.en.badge')}
+                        translating={translatingMap['hero.en.badge']}
+                      />
+                      <Field
+                        label="Main Headline"
+                        value={draft.hero.en.headline}
+                        onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, headline: value } } }))}
+                        onTranslate={() => handleTranslate(draft.hero.th.headline, 'hero.en.headline')}
+                        translating={translatingMap['hero.en.headline']}
+                      />
+                      <Field
+                        label="Description text"
+                        textarea
+                        value={draft.hero.en.description}
+                        onChange={(value) => setPath((next) => ({ ...next, hero: { ...next.hero, en: { ...next.hero.en, description: value } } }))}
+                        onTranslate={() => handleTranslate(draft.hero.th.description, 'hero.en.description')}
+                        translating={translatingMap['hero.en.description']}
+                      />
                     </div>
                   </div>
                 </div>
@@ -484,6 +591,8 @@ export default function AdminPage() {
                             nextStats[idx] = { ...nextStats[idx], en: { ...nextStats[idx].en, label: value } };
                             setPath((next) => ({ ...next, stats: nextStats }));
                           }}
+                          onTranslate={() => handleTranslate(stat.th.label, `stats.${idx}.en.label`)}
+                          translating={translatingMap[`stats.${idx}.en.label`]}
                         />
                       </div>
                     </div>
@@ -559,6 +668,8 @@ export default function AdminPage() {
                               next.sections[key].en.eyebrow = value;
                               return next;
                             })}
+                            onTranslate={() => handleTranslate(draft.sections[key].th.eyebrow, `sections.${key}.en.eyebrow`)}
+                            translating={translatingMap[`sections.${key}.en.eyebrow`]}
                           />
                           <Field
                             label="Section Title (EN)"
@@ -567,6 +678,8 @@ export default function AdminPage() {
                               next.sections[key].en.title = value;
                               return next;
                             })}
+                            onTranslate={() => handleTranslate(draft.sections[key].th.title, `sections.${key}.en.title`)}
+                            translating={translatingMap[`sections.${key}.en.title`]}
                           />
                           <Field
                             label="Section Description (EN)"
@@ -576,6 +689,8 @@ export default function AdminPage() {
                               next.sections[key].en.description = value;
                               return next;
                             })}
+                            onTranslate={() => handleTranslate(draft.sections[key].th.description, `sections.${key}.en.description`)}
+                            translating={translatingMap[`sections.${key}.en.description`]}
                           />
                         </div>
                       </div>
@@ -645,6 +760,8 @@ export default function AdminPage() {
                             nextItems[idx] = { ...nextItems[idx], en: { ...nextItems[idx].en, title: value } };
                             setPath((next) => ({ ...next, whyItems: nextItems }));
                           }}
+                          onTranslate={() => handleTranslate(item.th.title, `whyItems.${idx}.en.title`)}
+                          translating={translatingMap[`whyItems.${idx}.en.title`]}
                         />
                         <Field
                           label="Text / Description"
@@ -655,6 +772,8 @@ export default function AdminPage() {
                             nextItems[idx] = { ...nextItems[idx], en: { ...nextItems[idx].en, text: value } };
                             setPath((next) => ({ ...next, whyItems: nextItems }));
                           }}
+                          onTranslate={() => handleTranslate(item.th.text, `whyItems.${idx}.en.text`)}
+                          translating={translatingMap[`whyItems.${idx}.en.text`]}
                         />
                       </div>
                     </div>
@@ -685,6 +804,8 @@ export default function AdminPage() {
                       next.services.en.cta = value;
                       return next;
                     })}
+                    onTranslate={() => handleTranslate(draft.services.cta, 'services.en.cta')}
+                    translating={translatingMap['services.en.cta']}
                   />
                 </div>
 
@@ -749,6 +870,8 @@ export default function AdminPage() {
                               nextItems[idx] = { ...nextItems[idx], en: { ...nextItems[idx].en, title: value } };
                               setPath((next) => ({ ...next, services: { ...next.services, items: nextItems } }));
                             }}
+                            onTranslate={() => handleTranslate(item.th.title, `services.items.${idx}.en.title`)}
+                            translating={translatingMap[`services.items.${idx}.en.title`]}
                           />
                           <Field
                             label="Service Description"
@@ -759,6 +882,8 @@ export default function AdminPage() {
                               nextItems[idx] = { ...nextItems[idx], en: { ...nextItems[idx].en, description: value } };
                               setPath((next) => ({ ...next, services: { ...next.services, items: nextItems } }));
                             }}
+                            onTranslate={() => handleTranslate(item.th.description, `services.items.${idx}.en.description`)}
+                            translating={translatingMap[`services.items.${idx}.en.description`]}
                           />
                         </div>
                       </div>
@@ -812,6 +937,8 @@ export default function AdminPage() {
                         next.packages.en.recommended = value;
                         return next;
                       })}
+                      onTranslate={() => handleTranslate(draft.packages.th?.recommended, 'packages.en.recommended')}
+                      translating={translatingMap['packages.en.recommended']}
                     />
                     <Field
                       label="Ask Price EN"
@@ -821,6 +948,8 @@ export default function AdminPage() {
                         next.packages.en.askPrice = value;
                         return next;
                       })}
+                      onTranslate={() => handleTranslate(draft.packages.th?.askPrice, 'packages.en.askPrice')}
+                      translating={translatingMap['packages.en.askPrice']}
                     />
                   </div>
                 </div>
@@ -871,26 +1000,51 @@ export default function AdminPage() {
                         {/* Package EN */}
                         <div className="space-y-4">
                           <h4 className="font-black text-sm text-sky-600 dark:text-sky-300">ข้อมูลภาษาอังกฤษ</h4>
-                          <Field label="Package Short Name" value={pkg.en.name} onChange={(value) => {
-                            const nextItems = [...draft.packages.items];
-                            nextItems[idx].en.name = value;
-                            setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
-                          }} />
-                          <Field label="Full Title" value={pkg.en.title} onChange={(value) => {
-                            const nextItems = [...draft.packages.items];
-                            nextItems[idx].en.title = value;
-                            setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
-                          }} />
-                          <Field label="Description" textarea value={pkg.en.description} onChange={(value) => {
-                            const nextItems = [...draft.packages.items];
-                            nextItems[idx].en.description = value;
-                            setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
-                          }} />
-                          <Field label="CTA Button Label" value={pkg.en.cta} onChange={(value) => {
-                            const nextItems = [...draft.packages.items];
-                            nextItems[idx].en.cta = value;
-                            setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
-                          }} />
+                          <Field
+                            label="Package Short Name"
+                            value={pkg.en.name}
+                            onChange={(value) => {
+                              const nextItems = [...draft.packages.items];
+                              nextItems[idx].en.name = value;
+                              setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
+                            }}
+                            onTranslate={() => handleTranslate(pkg.th.name, `packages.items.${idx}.en.name`)}
+                            translating={translatingMap[`packages.items.${idx}.en.name`]}
+                          />
+                          <Field
+                            label="Full Title"
+                            value={pkg.en.title}
+                            onChange={(value) => {
+                              const nextItems = [...draft.packages.items];
+                              nextItems[idx].en.title = value;
+                              setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
+                            }}
+                            onTranslate={() => handleTranslate(pkg.th.title, `packages.items.${idx}.en.title`)}
+                            translating={translatingMap[`packages.items.${idx}.en.title`]}
+                          />
+                          <Field
+                            label="Description"
+                            textarea
+                            value={pkg.en.description}
+                            onChange={(value) => {
+                              const nextItems = [...draft.packages.items];
+                              nextItems[idx].en.description = value;
+                              setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
+                            }}
+                            onTranslate={() => handleTranslate(pkg.th.description, `packages.items.${idx}.en.description`)}
+                            translating={translatingMap[`packages.items.${idx}.en.description`]}
+                          />
+                          <Field
+                            label="CTA Button Label"
+                            value={pkg.en.cta}
+                            onChange={(value) => {
+                              const nextItems = [...draft.packages.items];
+                              nextItems[idx].en.cta = value;
+                              setPath((next) => ({ ...next, packages: { ...next.packages, items: nextItems } }));
+                            }}
+                            onTranslate={() => handleTranslate(pkg.th.cta, `packages.items.${idx}.en.cta`)}
+                            translating={translatingMap[`packages.items.${idx}.en.cta`]}
+                          />
                           <ListStringEditor
                             label="Features List (EN)"
                             items={pkg.en.items}
@@ -949,26 +1103,51 @@ export default function AdminPage() {
                       </div>
                       <div className="space-y-3">
                         <h4 className="font-black text-sm text-sky-600 dark:text-sky-300">EN (ภาษาอังกฤษ)</h4>
-                        <Field label="Reviewer Name" value={review.en.name} onChange={(value) => {
-                          const nextReviews = [...draft.reviews];
-                          nextReviews[idx].en.name = value;
-                          setPath((next) => ({ ...next, reviews: nextReviews }));
-                        }} />
-                        <Field label="Car Model" value={review.en.car} onChange={(value) => {
-                          const nextReviews = [...draft.reviews];
-                          nextReviews[idx].en.car = value;
-                          setPath((next) => ({ ...next, reviews: nextReviews }));
-                        }} />
-                        <Field label="Service Rendered" value={review.en.service} onChange={(value) => {
-                          const nextReviews = [...draft.reviews];
-                          nextReviews[idx].en.service = value;
-                          setPath((next) => ({ ...next, reviews: nextReviews }));
-                        }} />
-                        <Field label="Review Text" textarea value={review.en.text} onChange={(value) => {
-                          const nextReviews = [...draft.reviews];
-                          nextReviews[idx].en.text = value;
-                          setPath((next) => ({ ...next, reviews: nextReviews }));
-                        }} />
+                        <Field
+                          label="Reviewer Name"
+                          value={review.en.name}
+                          onChange={(value) => {
+                            const nextReviews = [...draft.reviews];
+                            nextReviews[idx].en.name = value;
+                            setPath((next) => ({ ...next, reviews: nextReviews }));
+                          }}
+                          onTranslate={() => handleTranslate(review.th.name, `reviews.${idx}.en.name`)}
+                          translating={translatingMap[`reviews.${idx}.en.name`]}
+                        />
+                        <Field
+                          label="Car Model"
+                          value={review.en.car}
+                          onChange={(value) => {
+                            const nextReviews = [...draft.reviews];
+                            nextReviews[idx].en.car = value;
+                            setPath((next) => ({ ...next, reviews: nextReviews }));
+                          }}
+                          onTranslate={() => handleTranslate(review.th.car, `reviews.${idx}.en.car`)}
+                          translating={translatingMap[`reviews.${idx}.en.car`]}
+                        />
+                        <Field
+                          label="Service Rendered"
+                          value={review.en.service}
+                          onChange={(value) => {
+                            const nextReviews = [...draft.reviews];
+                            nextReviews[idx].en.service = value;
+                            setPath((next) => ({ ...next, reviews: nextReviews }));
+                          }}
+                          onTranslate={() => handleTranslate(review.th.service, `reviews.${idx}.en.service`)}
+                          translating={translatingMap[`reviews.${idx}.en.service`]}
+                        />
+                        <Field
+                          label="Review Text"
+                          textarea
+                          value={review.en.text}
+                          onChange={(value) => {
+                            const nextReviews = [...draft.reviews];
+                            nextReviews[idx].en.text = value;
+                            setPath((next) => ({ ...next, reviews: nextReviews }));
+                          }}
+                          onTranslate={() => handleTranslate(review.th.text, `reviews.${idx}.en.text`)}
+                          translating={translatingMap[`reviews.${idx}.en.text`]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1003,22 +1182,47 @@ export default function AdminPage() {
                 </div>
                 <div className="rounded-2xl border border-slate-200 dark:border-white/10 p-5 bg-slate-50/50 dark:bg-white/5 space-y-4">
                   <h3 className="font-black text-sky-600 dark:text-sky-300">EN (ภาษาอังกฤษ)</h3>
-                  <Field label="Booking Title (EN)" value={draft.booking.en.title} onChange={(value) => setPath((next) => {
-                    next.booking.en.title = value;
-                    return next;
-                  })} />
-                  <Field label="Description (EN)" textarea value={draft.booking.en.description} onChange={(value) => setPath((next) => {
-                    next.booking.en.description = value;
-                    return next;
-                  })} />
-                  <Field label="Primary Button (EN)" value={draft.booking.en.primaryCta} onChange={(value) => setPath((next) => {
-                    next.booking.en.primaryCta = value;
-                    return next;
-                  })} />
-                  <Field label="Secondary Button (EN)" value={draft.booking.en.secondaryCta} onChange={(value) => setPath((next) => {
-                    next.booking.en.secondaryCta = value;
-                    return next;
-                  })} />
+                  <Field
+                    label="Booking Title (EN)"
+                    value={draft.booking.en.title}
+                    onChange={(value) => setPath((next) => {
+                      next.booking.en.title = value;
+                      return next;
+                    })}
+                    onTranslate={() => handleTranslate(draft.booking.th.title, 'booking.en.title')}
+                    translating={translatingMap['booking.en.title']}
+                  />
+                  <Field
+                    label="Description (EN)"
+                    textarea
+                    value={draft.booking.en.description}
+                    onChange={(value) => setPath((next) => {
+                      next.booking.en.description = value;
+                      return next;
+                    })}
+                    onTranslate={() => handleTranslate(draft.booking.th.description, 'booking.en.description')}
+                    translating={translatingMap['booking.en.description']}
+                  />
+                  <Field
+                    label="Primary Button (EN)"
+                    value={draft.booking.en.primaryCta}
+                    onChange={(value) => setPath((next) => {
+                      next.booking.en.primaryCta = value;
+                      return next;
+                    })}
+                    onTranslate={() => handleTranslate(draft.booking.th.primaryCta, 'booking.en.primaryCta')}
+                    translating={translatingMap['booking.en.primaryCta']}
+                  />
+                  <Field
+                    label="Secondary Button (EN)"
+                    value={draft.booking.en.secondaryCta}
+                    onChange={(value) => setPath((next) => {
+                      next.booking.en.secondaryCta = value;
+                      return next;
+                    })}
+                    onTranslate={() => handleTranslate(draft.booking.th.secondaryCta, 'booking.en.secondaryCta')}
+                    translating={translatingMap['booking.en.secondaryCta']}
+                  />
                 </div>
               </div>
             </section>
@@ -1066,42 +1270,93 @@ export default function AdminPage() {
                         {['th', 'en'].map((lang) => (
                           <div key={lang} className="space-y-3">
                             <h3 className="font-black text-sky-600 dark:text-sky-200">{lang.toUpperCase()}</h3>
-                            <Field
-                              label={copy.title || 'หัวเรื่องผลงาน'}
-                              value={item[lang].title}
-                              onChange={(value) => {
-                                const nextItems = [...draft.portfolioItems];
-                                nextItems[index][lang].title = value;
-                                setPath((next) => ({ ...next, portfolioItems: nextItems }));
-                              }}
-                            />
-                            <Field
-                              label={copy.car || 'รุ่นรถที่รับบริการ'}
-                              value={item[lang].car}
-                              onChange={(value) => {
-                                const nextItems = [...draft.portfolioItems];
-                                nextItems[index][lang].car = value;
-                                setPath((next) => ({ ...next, portfolioItems: nextItems }));
-                              }}
-                            />
-                            <Field
-                              label={copy.service || 'หมวดหมู่บริการ'}
-                              value={item[lang].service}
-                              onChange={(value) => {
-                                const nextItems = [...draft.portfolioItems];
-                                nextItems[index][lang].service = value;
-                                setPath((next) => ({ ...next, portfolioItems: nextItems }));
-                              }}
-                            />
-                            <Field
-                              label={copy.status || 'สถานะการทำงาน'}
-                              value={item[lang].status}
-                              onChange={(value) => {
-                                const nextItems = [...draft.portfolioItems];
-                                nextItems[index][lang].status = value;
-                                setPath((next) => ({ ...next, portfolioItems: nextItems }));
-                              }}
-                            />
+                            {lang === 'th' ? (
+                              <>
+                                <Field
+                                  label={copy.title || 'หัวเรื่องผลงาน'}
+                                  value={item[lang].title}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].title = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                />
+                                <Field
+                                  label={copy.car || 'รุ่นรถที่รับบริการ'}
+                                  value={item[lang].car}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].car = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                />
+                                <Field
+                                  label={copy.service || 'หมวดหมู่บริการ'}
+                                  value={item[lang].service}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].service = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                />
+                                <Field
+                                  label={copy.status || 'สถานะการทำงาน'}
+                                  value={item[lang].status}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].status = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                />
+                              </>
+                            ) : (
+                              <>
+                                <Field
+                                  label={copy.title || 'หัวเรื่องผลงาน'}
+                                  value={item[lang].title}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].title = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                  onTranslate={() => handleTranslate(item.th.title, `portfolioItems.${index}.en.title`)}
+                                  translating={translatingMap[`portfolioItems.${index}.en.title`]}
+                                />
+                                <Field
+                                  label={copy.car || 'รุ่นรถที่รับบริการ'}
+                                  value={item[lang].car}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].car = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                  onTranslate={() => handleTranslate(item.th.car, `portfolioItems.${index}.en.car`)}
+                                  translating={translatingMap[`portfolioItems.${index}.en.car`]}
+                                />
+                                <Field
+                                  label={copy.service || 'หมวดหมู่บริการ'}
+                                  value={item[lang].service}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].service = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                  onTranslate={() => handleTranslate(item.th.service, `portfolioItems.${index}.en.service`)}
+                                  translating={translatingMap[`portfolioItems.${index}.en.service`]}
+                                />
+                                <Field
+                                  label={copy.status || 'สถานะการทำงาน'}
+                                  value={item[lang].status}
+                                  onChange={(value) => {
+                                    const nextItems = [...draft.portfolioItems];
+                                    nextItems[index][lang].status = value;
+                                    setPath((next) => ({ ...next, portfolioItems: nextItems }));
+                                  }}
+                                  onTranslate={() => handleTranslate(item.th.status, `portfolioItems.${index}.en.status`)}
+                                  translating={translatingMap[`portfolioItems.${index}.en.status`]}
+                                />
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>
