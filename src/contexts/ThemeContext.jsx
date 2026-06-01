@@ -3,12 +3,22 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('den-theme') || 'light');
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('den-theme') || 'light';
+    } catch (e) {
+      return 'light';
+    }
+  });
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('den-theme', theme);
+    try {
+      localStorage.setItem('den-theme', theme);
+    } catch (e) {
+      // Ignore localStorage write error
+    }
   }, [theme]);
 
   const value = useMemo(

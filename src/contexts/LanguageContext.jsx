@@ -4,7 +4,13 @@ import { translations } from '../data/translations.js';
 const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState(() => localStorage.getItem('den-language') || 'th');
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem('den-language') || 'th';
+    } catch (e) {
+      return 'th';
+    }
+  });
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -12,7 +18,11 @@ export function LanguageProvider({ children }) {
 
   const switchLanguage = (nextLanguage) => {
     setLanguage(nextLanguage);
-    localStorage.setItem('den-language', nextLanguage);
+    try {
+      localStorage.setItem('den-language', nextLanguage);
+    } catch (e) {
+      // Ignore localStorage write error
+    }
   };
 
   const value = useMemo(

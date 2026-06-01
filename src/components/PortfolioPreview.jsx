@@ -19,14 +19,16 @@ export default function PortfolioPreview() {
   const filters = ['all', 'android', 'camera', 'electrical', 'audio', 'lighting', 'diagnostic'];
   const items = filter === 'all' ? content.portfolioItems : content.portfolioItems.filter((item) => item.category === filter);
 
+  const sec = content.sections?.portfolio?.[language] || t.sections.portfolio;
+
   return (
     <section id="portfolio" aria-labelledby="portfolio-title" className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
       <div className="section-shell">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
-            <p className="eyebrow">{t.sections.portfolio.eyebrow}</p>
-            <h2 id="portfolio-title" className="section-heading mt-5">{t.sections.portfolio.title}</h2>
-            <p className="muted-copy mt-4">{t.sections.portfolio.description}</p>
+            <p className="eyebrow">{sec.eyebrow}</p>
+            <h2 id="portfolio-title" className="section-heading mt-5">{sec.title}</h2>
+            <p className="muted-copy mt-4">{sec.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {filters.map((item) => (

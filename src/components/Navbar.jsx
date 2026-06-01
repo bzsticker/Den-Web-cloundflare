@@ -6,7 +6,7 @@ import LanguageToggle from './LanguageToggle.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 
 export default function Navbar() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const { content } = useSiteContent();
   const [open, setOpen] = useState(false);
 
@@ -30,8 +30,12 @@ export default function Navbar() {
             )}
           </span>
           <span className="leading-tight">
-            <span className="block text-base font-black text-brand-navy dark:text-white">{t.brand.name}</span>
-            <span className="block text-xs font-semibold text-sky-600 dark:text-sky-200">{t.brand.altName}</span>
+            <span className="block text-base font-black text-brand-navy dark:text-white">
+              {content.brand?.[language]?.name || t.brand.name}
+            </span>
+            <span className="block text-xs font-semibold text-sky-600 dark:text-sky-200">
+              {content.brand?.[language]?.altName || t.brand.altName}
+            </span>
           </span>
         </a>
 

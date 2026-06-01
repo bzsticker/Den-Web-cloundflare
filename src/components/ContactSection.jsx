@@ -25,6 +25,8 @@ export default function ContactSection() {
   const { content } = useSiteContent();
   const contact = content.contact;
 
+  const sec = content.sections?.contact?.[language] || t.sections.contact;
+
   const localizeItem = (item) => ({
     ...item,
     label: language === 'en' ? item.labelEn || item.label : item.label,
@@ -35,9 +37,9 @@ export default function ContactSection() {
     <section id="contact" aria-labelledby="contact-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
       <div className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <p className="eyebrow">{t.sections.contact.eyebrow}</p>
-          <h2 id="contact-title" className="section-heading mt-5">{t.sections.contact.title}</h2>
-          <p className="muted-copy mt-4">{t.sections.contact.description}</p>
+          <p className="eyebrow">{sec.eyebrow}</p>
+          <h2 id="contact-title" className="section-heading mt-5">{sec.title}</h2>
+          <p className="muted-copy mt-4">{sec.description}</p>
           <div className="mt-6 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-[#112a4a]">
             <Clock className="h-6 w-6 text-sky-500" aria-hidden="true" />
             <p className="mt-4 text-sm font-black text-slate-500 dark:text-slate-300">{t.contact.labels.hours}</p>

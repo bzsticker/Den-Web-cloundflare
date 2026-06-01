@@ -1,9 +1,14 @@
 import { CalendarCheck, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useSiteContent } from '../contexts/SiteContentContext.jsx';
 import BookingForm from './BookingForm.jsx';
 
 export default function BookingCTA() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const { content } = useSiteContent();
+
+  const bookingText = content.booking?.[language] || t.booking;
+  const navText = content.brand?.[language]?.short || t.nav.booking;
 
   return (
     <section id="booking" className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
@@ -13,19 +18,19 @@ export default function BookingCTA() {
             <div>
               <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-black text-sky-100">
                 <CalendarCheck className="h-4 w-4" aria-hidden="true" />
-                {t.nav.booking}
+                {navText}
               </p>
-              <h2 className="mt-5 max-w-3xl text-3xl font-black leading-tight sm:text-4xl">{t.booking.title}</h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-200">{t.booking.description}</p>
+              <h2 className="mt-5 max-w-3xl text-3xl font-black leading-tight sm:text-4xl">{bookingText.title}</h2>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-200">{bookingText.description}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
               <a href="#contact" className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-sky-500 px-6 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-sky-400">
                 <CalendarCheck className="h-5 w-5" aria-hidden="true" />
-                {t.booking.primaryCta}
+                {bookingText.primaryCta}
               </a>
               <a href="#contact" className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-4 font-black text-white transition hover:-translate-y-0.5 hover:bg-white/15">
                 <MessageCircle className="h-5 w-5" aria-hidden="true" />
-                {t.booking.secondaryCta}
+                {bookingText.secondaryCta}
               </a>
             </div>
             <BookingForm />
