@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://zrwecijtzupzpvykfgpo.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_to2-pq-cGO84a5nUcwE1ew_-fHhk1Xc';
 
 const isValidUrl = (url) => {
   if (!url || url === 'undefined' || url === 'null') return false;
