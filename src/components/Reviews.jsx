@@ -1,4 +1,4 @@
-import { BadgeCheck, Star } from 'lucide-react';
+import { BadgeCheck, Star, ExternalLink } from 'lucide-react';
 import { reviewMeta } from '../data/reviews.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useSiteContent } from '../contexts/SiteContentContext.jsx';
@@ -28,15 +28,33 @@ export default function Reviews() {
         </div>
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
           {items.map((item, index) => {
+            const isClickable = Boolean(item.link);
+            const CardComponent = isClickable ? 'a' : 'article';
+            const cardProps = isClickable
+              ? {
+                  href: item.link,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                  className: 'card p-6 block hover:-translate-y-1 hover:border-sky-200 hover:shadow-soft dark:hover:border-sky-300/30 transition duration-300 cursor-pointer group',
+                }
+              : {
+                  className: 'card p-6 hover:-translate-y-1 hover:border-sky-200 hover:shadow-soft dark:hover:border-sky-300/30 transition duration-300',
+                };
+
             return (
-              <article key={item.id} className="card p-6 hover:-translate-y-1 hover:border-sky-200 hover:shadow-soft dark:hover:border-sky-300/30">
+              <CardComponent key={item.id} {...cardProps}>
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex gap-1 text-brand-gold" aria-label="5-star rating">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <Star key={index} className="h-5 w-5 fill-current" aria-hidden="true" />
                     ))}
                   </div>
-                  <BadgeCheck className="h-6 w-6 text-sky-500" aria-hidden="true" />
+                  <div className="flex items-center gap-1.5">
+                    <BadgeCheck className="h-6 w-6 text-sky-500" aria-hidden="true" />
+                    {isClickable && (
+                      <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-sky-500 transition duration-200" aria-hidden="true" />
+                    )}
+                  </div>
                 </div>
                 <p className="mt-5 min-h-[168px] leading-8 text-slate-600 dark:text-slate-200">"{item.text}"</p>
                 <div className="mt-6 border-t border-slate-100 pt-5 dark:border-white/10">
@@ -51,7 +69,7 @@ export default function Reviews() {
                   </div>
                   <p className="mt-4 rounded-full bg-sky-50 px-3 py-2 text-sm font-bold text-sky-600 dark:bg-sky-400/10 dark:text-sky-200">{item.service}</p>
                 </div>
-              </article>
+              </CardComponent>
             );
           })}
         </div>

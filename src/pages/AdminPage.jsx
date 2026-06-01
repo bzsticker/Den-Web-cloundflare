@@ -1150,6 +1150,18 @@ export default function AdminPage() {
                         />
                       </div>
                     </div>
+                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
+                      <Field
+                        label="ลิงก์รีวิวปลายทาง (เช่น ลิงก์โพสต์ใน Facebook / Review URL)"
+                        value={review.link}
+                        onChange={(value) => {
+                          const nextReviews = [...draft.reviews];
+                          nextReviews[idx] = { ...nextReviews[idx], link: value };
+                          setPath((next) => ({ ...next, reviews: nextReviews }));
+                        }}
+                        placeholder="https://www.facebook.com/..."
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
