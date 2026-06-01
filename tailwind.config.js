@@ -20,6 +20,7 @@ export default {
       },
       fontFamily: {
         sans: [
+          'Prompt',
           'Inter',
           'Noto Sans Thai',
           'ui-sans-serif',
