@@ -1,8 +1,11 @@
 import { ArrowRight, CheckCircle2, Clock3, Gauge, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useSiteContent } from '../contexts/SiteContentContext.jsx';
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const { content } = useSiteContent();
+  const heroContent = content.hero[language] || content.hero.th;
 
   return (
     <section
@@ -15,12 +18,12 @@ export default function Hero() {
         <div>
           <div className="eyebrow shadow-white/60">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            {t.hero.badge}
+            {heroContent.badge || t.hero.badge}
           </div>
           <h1 id="hero-title" className="mt-6 max-w-4xl text-[2.65rem] font-black leading-[1.08] text-brand-navy sm:text-6xl lg:text-7xl dark:text-white">
-            {t.hero.headline}
+            {heroContent.headline || t.hero.headline}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl sm:leading-9 dark:text-slate-200">{t.hero.description}</p>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl sm:leading-9 dark:text-slate-200">{heroContent.description || t.hero.description}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               href="#booking"
@@ -54,6 +57,13 @@ export default function Hero() {
             QC
           </div>
           <div className="rounded-[1.35rem] border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-4 dark:border-white/10 dark:from-[#0b1f3a] dark:to-[#112a4a] sm:p-5">
+            {content.hero.dashboardImageUrl && (
+              <img
+                className="mb-5 h-48 w-full rounded-3xl object-cover"
+                src={content.hero.dashboardImageUrl}
+                alt=""
+              />
+            )}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="inline-flex items-center gap-2 text-sm font-bold text-sky-600 dark:text-sky-200">

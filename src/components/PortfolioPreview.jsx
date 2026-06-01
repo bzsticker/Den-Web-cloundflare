@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { portfolioMeta } from '../data/portfolio.js';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useSiteContent } from '../contexts/SiteContentContext.jsx';
 
 const gradients = [
   'from-sky-400 via-blue-500 to-indigo-600',
@@ -13,10 +13,11 @@ const gradients = [
 ];
 
 export default function PortfolioPreview() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const { content } = useSiteContent();
   const [filter, setFilter] = useState('all');
   const filters = ['all', 'android', 'camera', 'electrical', 'audio', 'lighting', 'diagnostic'];
-  const items = filter === 'all' ? portfolioMeta : portfolioMeta.filter((item) => item.category === filter);
+  const items = filter === 'all' ? content.portfolioItems : content.portfolioItems.filter((item) => item.category === filter);
 
   return (
     <section id="portfolio" aria-labelledby="portfolio-title" className="bg-white py-20 transition-colors duration-300 dark:bg-[#10213d] lg:py-28">
@@ -47,16 +48,22 @@ export default function PortfolioPreview() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {items.map((meta, index) => {
-            const item = t.portfolio[meta.id];
+            const item = meta[language] || meta.th || t.portfolio[meta.id];
             return (
               <article key={meta.id} className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-glow dark:border-white/10 dark:bg-[#112a4a]">
                 <div className={`relative h-56 overflow-hidden bg-gradient-to-br ${gradients[index % gradients.length]} p-5`}>
-                  <div className="absolute inset-x-8 bottom-8 h-20 rounded-[999px] bg-white/18 blur-xl" />
-                  <div className="absolute bottom-9 left-8 right-8 h-12 rounded-t-[3rem] rounded-b-2xl border border-white/30 bg-white/25 shadow-2xl backdrop-blur-sm">
-                    <div className="absolute left-8 top-8 h-9 w-9 rounded-full border-4 border-white/70 bg-slate-900/35" />
-                    <div className="absolute right-8 top-8 h-9 w-9 rounded-full border-4 border-white/70 bg-slate-900/35" />
-                    <div className="absolute left-1/2 top-[-1.35rem] h-10 w-28 -translate-x-1/2 rounded-t-[2rem] border border-white/30 bg-white/20" />
-                  </div>
+                  {meta.imageUrl ? (
+                    <img className="absolute inset-0 h-full w-full object-cover" src={meta.imageUrl} alt="" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-x-8 bottom-8 h-20 rounded-[999px] bg-white/18 blur-xl" />
+                      <div className="absolute bottom-9 left-8 right-8 h-12 rounded-t-[3rem] rounded-b-2xl border border-white/30 bg-white/25 shadow-2xl backdrop-blur-sm">
+                        <div className="absolute left-8 top-8 h-9 w-9 rounded-full border-4 border-white/70 bg-slate-900/35" />
+                        <div className="absolute right-8 top-8 h-9 w-9 rounded-full border-4 border-white/70 bg-slate-900/35" />
+                        <div className="absolute left-1/2 top-[-1.35rem] h-10 w-28 -translate-x-1/2 rounded-t-[2rem] border border-white/30 bg-white/20" />
+                      </div>
+                    </>
+                  )}
                   <div className="relative flex h-full flex-col justify-between rounded-2xl border border-white/25 bg-white/15 p-4 text-white backdrop-blur-sm">
                     <span className="w-fit rounded-full bg-white/20 px-3 py-1.5 text-sm font-black">{item.service}</span>
                     <span className="text-2xl font-black">{item.car}</span>

@@ -13,8 +13,8 @@ export const supabase =
   supabaseConfig.isReady
     ? createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-          persistSession: false,
-          autoRefreshToken: false,
+          persistSession: true,
+          autoRefreshToken: true,
         },
       })
     : null;

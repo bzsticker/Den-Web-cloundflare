@@ -1,11 +1,13 @@
 import { CalendarCheck, Menu, Wrench, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useSiteContent } from '../contexts/SiteContentContext.jsx';
 import LanguageToggle from './LanguageToggle.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 
 export default function Navbar() {
   const { t } = useLanguage();
+  const { content } = useSiteContent();
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -21,7 +23,11 @@ export default function Navbar() {
       <nav className="section-shell flex h-20 items-center justify-between" aria-label="Main navigation">
         <a href="#top" className="focus-ring flex rounded-2xl items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-glow">
-            <Wrench className="h-5 w-5" aria-hidden="true" />
+            {content.brand.logoUrl ? (
+              <img className="h-full w-full rounded-2xl object-cover" src={content.brand.logoUrl} alt="" />
+            ) : (
+              <Wrench className="h-5 w-5" aria-hidden="true" />
+            )}
           </span>
           <span className="leading-tight">
             <span className="block text-base font-black text-brand-navy dark:text-white">{t.brand.name}</span>

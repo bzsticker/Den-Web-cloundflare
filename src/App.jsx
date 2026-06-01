@@ -11,28 +11,38 @@ import Services from './components/Services.jsx';
 import Stats from './components/Stats.jsx';
 import WhyChooseUs from './components/WhyChooseUs.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
+import { SiteContentProvider } from './contexts/SiteContentContext.jsx';
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
+import AdminPage from './pages/AdminPage.jsx';
+
+function LandingPage() {
+  return (
+    <div className="min-h-screen overflow-hidden bg-slate-50 text-brand-ink antialiased transition-colors duration-300 dark:bg-[#07182d] dark:text-slate-100">
+      <AnnouncementBar />
+      <Navbar />
+      <main>
+        <Hero />
+        <Stats />
+        <Services />
+        <WhyChooseUs />
+        <Packages />
+        <PortfolioPreview />
+        <Reviews />
+        <BookingCTA />
+        <ContactSection />
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 export default function App() {
+  const isAdmin = window.location.pathname.startsWith('/admin');
+
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <div className="min-h-screen overflow-hidden bg-slate-50 text-brand-ink antialiased transition-colors duration-300 dark:bg-[#07182d] dark:text-slate-100">
-          <AnnouncementBar />
-          <Navbar />
-          <main>
-            <Hero />
-            <Stats />
-            <Services />
-            <WhyChooseUs />
-            <Packages />
-            <PortfolioPreview />
-            <Reviews />
-            <BookingCTA />
-            <ContactSection />
-          </main>
-          <Footer />
-        </div>
+        <SiteContentProvider>{isAdmin ? <AdminPage /> : <LandingPage />}</SiteContentProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

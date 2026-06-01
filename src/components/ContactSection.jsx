@@ -1,5 +1,6 @@
 import { Clock, ExternalLink, Facebook, LineChart, MapPin, Phone } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useSiteContent } from '../contexts/SiteContentContext.jsx';
 
 function ContactLinkCard({ icon: Icon, label, value, href }) {
   return (
@@ -20,7 +21,15 @@ function ContactLinkCard({ icon: Icon, label, value, href }) {
 }
 
 export default function ContactSection() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const { content } = useSiteContent();
+  const contact = content.contact;
+
+  const localizeItem = (item) => ({
+    ...item,
+    label: language === 'en' ? item.labelEn || item.label : item.label,
+    value: language === 'en' ? item.valueEn || item.value : item.value,
+  });
 
   return (
     <section id="contact" aria-labelledby="contact-title" className="bg-slate-50 py-20 transition-colors duration-300 dark:bg-[#07182d] lg:py-28">
@@ -32,7 +41,7 @@ export default function ContactSection() {
           <div className="mt-6 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-white/10 dark:bg-[#112a4a]">
             <Clock className="h-6 w-6 text-sky-500" aria-hidden="true" />
             <p className="mt-4 text-sm font-black text-slate-500 dark:text-slate-300">{t.contact.labels.hours}</p>
-            <p className="mt-1 text-lg font-black text-brand-navy dark:text-white">{t.contact.hours}</p>
+            <p className="mt-1 text-lg font-black text-brand-navy dark:text-white">{contact.hours || t.contact.hours}</p>
           </div>
         </div>
 
@@ -40,7 +49,7 @@ export default function ContactSection() {
           <div>
             <h3 className="text-lg font-black text-brand-navy dark:text-white">{t.contact.labels.phone}</h3>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              {t.contact.phoneNumbers.map((item) => (
+              {contact.phoneNumbers.map(localizeItem).map((item) => (
                 <ContactLinkCard key={item.href} icon={Phone} label={item.label} value={item.value} href={item.href} />
               ))}
             </div>
@@ -49,7 +58,7 @@ export default function ContactSection() {
           <div>
             <h3 className="text-lg font-black text-brand-navy dark:text-white">{t.contact.labels.facebook}</h3>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              {t.contact.facebookPages.map((item) => (
+              {contact.facebookPages.map(localizeItem).map((item) => (
                 <ContactLinkCard key={item.href} icon={Facebook} label={item.label} value={item.value} href={item.href} />
               ))}
             </div>
@@ -58,14 +67,14 @@ export default function ContactSection() {
           <div>
             <h3 className="text-lg font-black text-brand-navy dark:text-white">{t.contact.labels.line}</h3>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              <ContactLinkCard icon={LineChart} label={t.contact.labels.line} value={t.contact.line} href={t.contact.links.line} />
+              <ContactLinkCard icon={LineChart} label={t.contact.labels.line} value={contact.line || t.contact.line} href={contact.lineHref || t.contact.links.line} />
             </div>
           </div>
 
           <div>
             <h3 className="text-lg font-black text-brand-navy dark:text-white">{t.contact.labels.location}</h3>
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              {t.contact.branches.map((item) => (
+              {contact.branches.map(localizeItem).map((item) => (
                 <ContactLinkCard key={item.href} icon={MapPin} label={item.label} value={item.value} href={item.href} />
               ))}
             </div>
